@@ -1,6 +1,3 @@
-Certainly! Here's a comprehensive `README.md` for your Todo App project:
-
----
 
 # Todo App
 
@@ -199,6 +196,3 @@ func closeFile(f *os.File) error {
 
 Contributions to this project are welcome! If you have any ideas for improvements or would like to contribute code, feel free to submit a pull request.
 
----
-
-This `README.md` provides a comprehensive guide to setting up, using, and understanding the structure and functionality of your Todo App.
