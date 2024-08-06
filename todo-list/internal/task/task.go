@@ -5,6 +5,10 @@ import (
     "os"
     "strconv"
     "time"
+    "errors"
+    
+    
+    
 )
 
 
@@ -91,4 +95,51 @@ func ReadTasks() ([]Task, error) {
     }
 
     return tasks, nil
+}
+
+
+func CompleteTask(taskID string) error {
+    // Open the tasks CSV file for reading and writing
+    file, err := os.OpenFile("data/tasks.csv", os.O_RDWR, 0666)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    reader := csv.NewReader(file)
+    rows, err := reader.ReadAll()
+    if err != nil {
+        return err
+    }
+
+    var updatedRows [][]string
+    taskFound := false
+
+    for _, row := range rows {
+        if row[0] == taskID {
+            // Update the task's IsComplete status
+            row[3] = "true"
+            taskFound = true
+        }
+        updatedRows = append(updatedRows, row)
+    }
+
+    if !taskFound {
+        return errors.New("task not found")
+    }
+
+    // Re-open the file for writing and save the updated rows
+    file, err = os.OpenFile("data/tasks.csv", os.O_RDWR|os.O_TRUNC, 0666)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    writer := csv.NewWriter(file)
+    err = writer.WriteAll(updatedRows)
+    if err != nil {
+        return err
+    }
+
+    return nil
 }
