@@ -1,7 +1,6 @@
 
-# Todo App
-
-Welcome to the Todo App project! This CLI-based application allows you to manage tasks directly from your terminal. You can perform basic CRUD (Create, Read, Update, Delete) operations on tasks, and these tasks are stored in a CSV file.
+# Todo List
+Welcome to the Todo List project! This CLI-based application allows you to manage tasks directly from your terminal. You can perform basic CRUD (Create, Read, Update, Delete) operations on tasks, and these tasks are stored in a CSV file.
 
 ## Overview
 
@@ -78,7 +77,6 @@ $ tasks delete 1
 
 - **CSV**: For storing tasks in a simple CSV file.
 - **Cobra**: For creating the command-line interface.
-- **Timediff**: For displaying relative friendly time differences (e.g., 1 hour ago, 10 minutes ago).
 - **OS**: For file operations.
 - **Syscall**: For file locking to prevent concurrent read/writes.
 
@@ -87,10 +85,10 @@ $ tasks delete 1
 ```plaintext
 todo-app/
 ├── cmd/
-│   └── root.go
-│   └── add.go
-│   └── list.go
-│   └── complete.go
+│   ├── root.go
+│   ├── add.go
+│   ├── list.go
+│   ├── complete.go
 │   └── delete.go
 ├── internal/
 │   ├── tasks/
@@ -100,7 +98,7 @@ todo-app/
 ├── data/
 │   └── tasks.csv
 ├── go.mod
-└── go.sum
+├── go.sum
 └── main.go
 ```
 
@@ -123,6 +121,7 @@ todo-app/
 
 - **go.mod**: Defines the module and its dependencies.
 - **go.sum**: Contains checksums for dependencies.
+- **main.go**: The entry point for the application, sets up and executes the root command.
 
 ## Getting Started
 
@@ -158,42 +157,3 @@ ID,Description,CreatedAt,IsComplete
 2,Finish this video,2024-07-27T16:45:26-05:00,true
 3,Find a video editor,2024-07-27T16:45:31-05:00,false
 ```
-
-## Technical Considerations
-
-### Stderr vs Stdout
-
-Make sure to write any diagnostics or errors to the stderr stream and write output to stdout.
-
-### File Locking
-
-The underlying data file should be locked by the process to prevent concurrent read/writes. This can be achieved using the `flock` system call in Unix-like systems to obtain an exclusive lock on the file.
-
-Example code for file locking:
-
-```go
-func loadFile(filepath string) (*os.File, error) {
-    f, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, os.ModePerm)
-    if (err != nil) {
-        return nil, fmt.Errorf("failed to open file for reading: %w", err)
-    }
-
-    // Exclusive lock obtained on the file descriptor
-    if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX); err != nil {
-        _ = f.Close()
-        return nil, err
-    }
-
-    return f, nil
-}
-
-func closeFile(f *os.File) error {
-    syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
-    return f.Close()
-}
-```
-
-## Contribution
-
-Contributions to this project are welcome! If you have any ideas for improvements or would like to contribute code, feel free to submit a pull request.
-
